@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sheain · AI Product Portfolio</title>
+    <style>
+      :root {
+        --bg: #050816;
+        --bg-soft: #0f172a;
+        --accent: #f9a8d4;
+        --accent-strong: #fb7185;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --chip-bg: rgba(249, 168, 212, 0.08);
+        --card-bg: rgba(15, 23, 42, 0.9);
+        --border-subtle: rgba(148, 163, 184, 0.25);
+        --blur: 18px;
+        --radius-lg: 18px;
+        --radius-full: 999px;
+        --shadow-soft: 0 22px 45px rgba(15, 23, 42, 0.85);
+        --transition-fast: 180ms ease-out;
+        --transition-slow: 260ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      @font-face {
+        font-family: "myFont";
+        src: url("comsc.ttf");
+      }
+
+      .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .noise {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.14;
+        mix-blend-mode: soft-light;
+        background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+        z-index: -1;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 7vw;
+        backdrop-filter: blur(18px);
+        background: radial-gradient(circle at top left, rgba(24, 24, 27, 0.9), rgba(15, 23, 42, 0.9));
+        border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1px solid rgba(248, 250, 252, 0.2);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.8);
+        transform-origin: center;
+        transition: transform var(--transition-slow), box-shadow var(--transition-fast),
+          border-color var(--transition-fast);
+      }
+
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .avatar:hover {
+        transform: translateY(-3px) rotate(-3deg) scale(1.03);
+        box-shadow: 0 26px 55px rgba(15, 23, 42, 1);
+        border-color: rgba(251, 113, 133, 0.85);
+      }
+
+      .brand-text-main {
+        font-family: "myFont", system-ui, sans-serif;
+        letter-spacing: 0.08em;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: #f9fafb;
+      }
+
+      .brand-text-sub {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      .nav-link {
+        position: relative;
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 8px 4px;
+        transition: color var(--transition-fast), transform var(--transition-fast);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 12%;
+        right: 12%;
+        bottom: 3px;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform var(--transition-slow);
+      }
+
+      .nav-link:hover {
+        color: #e5e7eb;
+        transform: translateY(-1px);
+      }
+
+      .nav-link:hover::after {
+        transform: scaleX(1);
+      }
+
+      .nav-cta {
+        border-radius: var(--radius-full);
+        padding: 8px 16px;
+        border: 1px solid rgba(248, 250, 252, 0.25);
+        color: #f9fafb;
+        text-decoration: none;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: radial-gradient(circle at 0 0, rgba(248, 113, 133, 0.45), transparent 55%),
+          rgba(15, 23, 42, 0.92);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.85);
+        transition: transform var(--transition-slow), box-shadow var(--transition-fast),
+          border-color var(--transition-fast), background var(--transition-slow);
+      }
+
+      .nav-cta span {
+        font-size: 17px;
+        transition: transform var(--transition-fast);
+      }
+
+      .nav-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 26px 60px rgba(15, 23, 42, 1);
+        border-color: rgba(251, 113, 133, 0.65);
+        background: radial-gradient(circle at 100% 0, rgba(248, 113, 133, 0.7), transparent 55%),
+          rgba(15, 23, 42, 0.98);
+      }
+
+      .nav-cta:hover span {
+        transform: translateX(3px);
+      }
+
+      main {
+        flex: 1;
+        padding: 32px 7vw 80px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.6fr);
+        gap: 42px;
+        align-items: center;
+        margin-top: 40px;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px;
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(248, 250, 252, 0.16);
+        background: radial-gradient(circle at 0 0, rgba(244, 114, 182, 0.35), transparent 60%),
+          rgba(15, 23, 42, 0.9);
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 18px;
+        backdrop-filter: blur(14px);
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #fecaca, #fb7185);
+        box-shadow: 0 0 0 0 rgba(248, 113, 133, 0.7);
+        animation: pulse 1.6s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(248, 113, 133, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(248, 113, 133, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(248, 113, 133, 0);
+        }
+      }
+
+      .hero-title {
+        font-size: clamp(32px, 4vw, 42px);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: #f9fafb;
+      }
+
+      .hero-title span {
+        background: linear-gradient(120deg, var(--accent), #f97316, #a855f7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero-sub {
+        margin-top: 14px;
+        max-width: 420px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .hero-sub strong {
+        color: #e5e7eb;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 26px;
+      }
+
+      .btn-primary,
+      .btn-ghost {
+        border-radius: var(--radius-full);
+        padding: 10px 20px;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        background: none;
+        color: inherit;
+        text-decoration: none;
+        transition: transform var(--transition-slow), box-shadow var(--transition-slow),
+          border-color var(--transition-fast), background var(--transition-slow), color var(--transition-fast);
+      }
+
+      .btn-primary {
+        background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.4), transparent 55%),
+          linear-gradient(135deg, #fb7185, #f97316);
+        color: #111827;
+        box-shadow: 0 22px 45px rgba(251, 113, 133, 0.45);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 30px 60px rgba(248, 113, 133, 0.65);
+      }
+
+      .btn-ghost {
+        border-color: rgba(148, 163, 184, 0.45);
+        background: rgba(15, 23, 42, 0.8);
+        color: var(--text);
+      }
+
+      .btn-ghost:hover {
+        border-color: rgba(248, 113, 133, 0.8);
+        background: radial-gradient(circle at 100% 0, rgba(248, 113, 133, 0.35), transparent 60%),
+          rgba(15, 23, 42, 0.95);
+        transform: translateY(-1px);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      }
+
+      .btn-primary span,
+      .btn-ghost span {
+        font-size: 18px;
+        transition: transform var(--transition-fast);
+      }
+
+      .btn-primary:hover span,
+      .btn-ghost:hover span {
+        transform: translateX(3px);
+      }
+
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+        font-size: 12px;
+      }
+
+      .chip {
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: var(--chip-bg);
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(14px);
+      }
+
+      .chip-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: linear-gradient(120deg, #38bdf8, #a855f7);
+      }
+
+      .hero-orbit {
+        position: relative;
+        min-height: 260px;
+      }
+
+      .hero-orbit-card {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        max-width: 380px;
+        border-radius: 26px;
+        padding: 22px 22px 20px;
+        background: radial-gradient(circle at 0 0, rgba(248, 113, 133, 0.4), transparent 55%),
+          radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.35), transparent 50%),
+          rgba(15, 23, 42, 0.92);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        overflow: hidden;
+      }
+
+      .hero-orbit-grid {
+        position: absolute;
+        inset: -60px;
+        opacity: 0.23;
+        background-image: radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.4) 1px, transparent 0);
+        background-size: 32px 32px;
+        mask-image: radial-gradient(circle at top, black, transparent 70%);
+      }
+
+      .orbit-inner {
+        position: relative;
+      }
+
+      .orbit-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .orbit-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: rgba(209, 213, 219, 0.9);
+      }
+
+      .orbit-pill {
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        font-size: 11px;
+        color: var(--muted);
+        background: rgba(15, 23, 42, 0.9);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .orbit-pill-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #22c55e, #16a34a);
+      }
+
+      .orbit-roles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .orbit-role {
+        padding: 10px;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.94);
+        font-size: 11px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: default;
+        transform-origin: center;
+        transition: transform var(--transition-slow), box-shadow var(--transition-fast),
+          border-color var(--transition-fast), background var(--transition-slow);
+      }
+
+      .orbit-role-title {
+        font-size: 11px;
+        color: #e5e7eb;
+      }
+
+      .orbit-role-sub {
+        color: var(--muted);
+      }
+
+      .orbit-role:hover {
+        transform: translateY(-3px) translateZ(0);
+        border-color: rgba(251, 113, 133, 0.9);
+        background: radial-gradient(circle at 0 0, rgba(248, 113, 133, 0.3), transparent 60%),
+          rgba(15, 23, 42, 0.98);
+        box-shadow: 0 24px 50px rgba(15, 23, 42, 1);
+      }
+
+      .orbit-role:hover .orbit-role-title {
+        color: #fecaca;
+      }
+
+      .orbit-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 14px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .badge {
+        padding: 3px 8px;
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(248, 250, 252, 0.35);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .orbit-ring {
+        position: absolute;
+        inset: -40px;
+        border-radius: 999px;
+        border: 1px dashed rgba(148, 163, 184, 0.5);
+        opacity: 0.45;
+        transform-origin: center;
+        animation: orbit 22s linear infinite;
+        pointer-events: none;
+      }
+
+      .orbit-ring:nth-of-type(2) {
+        inset: -75px;
+        border-style: solid;
+        border-color: rgba(148, 163, 184, 0.2);
+        animation-duration: 34s;
+        animation-direction: reverse;
+      }
+
+      @keyframes orbit {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .section {
+        margin-top: 80px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #e5e7eb;
+      }
+
+      .section-caption {
+        font-size: 13px;
+        color: var(--muted);
+        max-width: 360px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        position: relative;
+        padding: 18px 18px 16px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-subtle);
+        background: var(--card-bg);
+        box-shadow: 0 16px 34px rgba(15, 23, 42, 0.8);
+        overflow: hidden;
+        cursor: default;
+        transition: transform var(--transition-slow), box-shadow var(--transition-slow),
+          border-color var(--transition-fast), background var(--transition-slow);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: -40%;
+        background: radial-gradient(circle at 0 0, rgba(248, 113, 133, 0.25), transparent 60%),
+          radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.25), transparent 55%);
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+        transition: opacity var(--transition-slow);
+        pointer-events: none;
+      }
+
+      .card:hover {
+        transform: translateY(-6px) translateZ(0) scale(1.01);
+        border-color: rgba(248, 250, 252, 0.5);
+        box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
+      }
+
+      .card:hover::before {
+        opacity: 1;
+      }
+
+      .card-title {
+        font-size: 14px;
+        color: #f9fafb;
+        margin-bottom: 4px;
+      }
+
+      .card-meta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .card-body {
+        font-size: 12px;
+        color: #d1d5db;
+        margin-bottom: 12px;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag {
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        font-size: 11px;
+        color: var(--muted);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .card-link {
+        position: absolute;
+        inset: 0;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 2.2fr);
+        gap: 32px;
+        align-items: start;
+      }
+
+      .timeline-list {
+        border-left: 1px solid rgba(55, 65, 81, 1);
+        padding-left: 18px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .timeline-item {
+        position: relative;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(31, 41, 55, 1);
+        background: rgba(15, 23, 42, 0.9);
+        font-size: 12px;
+        color: #d1d5db;
+        cursor: default;
+        overflow: hidden;
+        transition: transform var(--transition-slow), border-color var(--transition-fast),
+          box-shadow var(--transition-slow), background var(--transition-slow);
+      }
+
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -19px;
+        top: 14px;
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #fee2e2, #fb7185);
+        box-shadow: 0 0 0 0 rgba(248, 113, 133, 0.6);
+        transition: box-shadow var(--transition-fast);
+      }
+
+      .timeline-item:hover {
+        transform: translateY(-3px);
+        border-color: rgba(248, 113, 133, 0.85);
+        box-shadow: 0 24px 55px rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 0 0, rgba(248, 113, 133, 0.28), transparent 55%),
+          rgba(15, 23, 42, 0.96);
+      }
+
+      .timeline-item:hover::before {
+        box-shadow: 0 0 0 6px rgba(248, 113, 133, 0.15);
+      }
+
+      .timeline-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+
+      .timeline-title {
+        font-size: 12px;
+        color: #f9fafb;
+        margin-bottom: 3px;
+      }
+
+      .timeline-note {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .timeline-panel {
+        padding: 14px 16px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-subtle);
+        background: rgba(15, 23, 42, 0.95);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.85);
+        font-size: 12px;
+        color: #e5e7eb;
+      }
+
+      .timeline-panel h4 {
+        margin: 0 0 6px;
+        font-size: 13px;
+        color: #f9fafb;
+      }
+
+      .timeline-panel p {
+        margin: 0 0 6px;
+        color: var(--muted);
+      }
+
+      .timeline-panel ul {
+        padding-left: 18px;
+        margin: 4px 0 0;
+        color: #d1d5db;
+      }
+
+      .timeline-panel li {
+        margin-bottom: 2px;
+      }
+
+      footer {
+        padding: 20px 7vw 28px;
+        border-top: 1px solid rgba(31, 41, 55, 1);
+        font-size: 11px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .footer-link {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color var(--transition-fast), transform var(--transition-fast);
+        font-size: 11px;
+      }
+
+      .footer-link:hover {
+        color: #f9fafb;
+        transform: translateY(-1px);
+      }
+
+      .chat-trigger {
+        cursor: pointer;
+      }
+
+      .chat-overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        padding: 16px;
+        background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.85), rgba(2, 6, 23, 0.92));
+        backdrop-filter: blur(18px);
+        z-index: 40;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--transition-slow);
+      }
+
+      .chat-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .chat-panel {
+        width: min(380px, 100%);
+        max-height: 520px;
+        border-radius: 22px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: radial-gradient(circle at 0 0, rgba(248, 113, 133, 0.4), transparent 60%),
+          radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.3), transparent 60%),
+          rgba(15, 23, 42, 0.98);
+        box-shadow: 0 30px 70px rgba(15, 23, 42, 1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px 10px;
+        border-bottom: 1px solid rgba(31, 41, 55, 1);
+      }
+
+      .chat-title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .chat-title-main {
+        font-size: 13px;
+        color: #f9fafb;
+      }
+
+      .chat-title-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .chat-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 8px;
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .chat-status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: radial-gradient(circle, #bbf7d0, #22c55e);
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+        animation: pulse 1.8s infinite;
+      }
+
+      .chat-close {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 999px;
+        transition: background var(--transition-fast), color var(--transition-fast),
+          transform var(--transition-fast);
+      }
+
+      .chat-close:hover {
+        background: rgba(31, 41, 55, 0.9);
+        color: #e5e7eb;
+        transform: translateY(-1px);
+      }
+
+      .chat-body {
+        padding: 12px 16px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto;
+      }
+
+      .chat-message {
+        max-width: 90%;
+        padding: 8px 11px;
+        border-radius: 14px;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .chat-message-bot {
+        align-self: flex-start;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: #e5e7eb;
+      }
+
+      .chat-message-me {
+        align-self: flex-end;
+        background: linear-gradient(135deg, #fb7185, #f97316);
+        color: #111827;
+        border-radius: 14px 14px 4px 14px;
+      }
+
+      .chat-input-bar {
+        padding: 10px 12px 12px;
+        border-top: 1px solid rgba(31, 41, 55, 1);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: rgba(15, 23, 42, 0.96);
+      }
+
+      .chat-input {
+        flex: 1;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 1);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        font-size: 12px;
+        padding: 7px 11px;
+        outline: none;
+        transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+          background var(--transition-fast);
+      }
+
+      .chat-input::placeholder {
+        color: rgba(148, 163, 184, 0.85);
+      }
+
+      .chat-input:focus {
+        border-color: rgba(248, 113, 133, 0.9);
+        background: rgba(15, 23, 42, 0.98);
+        box-shadow: 0 0 0 1px rgba(248, 113, 133, 0.5);
+      }
+
+      .chat-send {
+        border-radius: var(--radius-full);
+        border: none;
+        padding: 8px 12px;
+        background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.4), transparent 55%),
+          linear-gradient(135deg, #fb7185, #f97316);
+        color: #111827;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        box-shadow: 0 18px 40px rgba(251, 113, 133, 0.45);
+        transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+      }
+
+      .chat-send span {
+        font-size: 15px;
+        transition: transform var(--transition-fast);
+      }
+
+      .chat-send:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 24px 60px rgba(251, 113, 133, 0.6);
+      }
+
+      .chat-send:hover span {
+        transform: translateX(2px);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 420ms ease-out, transform 420ms ease-out;
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .reveal-delay-1 {
+        transition-delay: 80ms;
+      }
+
+      .reveal-delay-2 {
+        transition-delay: 160ms;
+      }
+
+      .reveal-delay-3 {
+        transition-delay: 240ms;
+      }
+
+      @media (max-width: 900px) {
+        .nav {
+          padding-inline: 18px;
+        }
+        main {
+          padding-inline: 18px;
+        }
+        .hero {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 28px;
+        }
+        .hero-orbit {
+          order: -1;
+        }
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .timeline {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+        .grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .section {
+          margin-top: 56px;
+        }
+        .hero {
+          margin-top: 26px;
+        }
+        footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="noise"></div>
+
+      <header class="nav">
+        <div class="nav-brand">
+          <div class="avatar">
+            <img
+              src="https://www.helloimg.com/i/2024/12/10/67585c4cc7304.jpg"
+              alt="Sheain avatar"
+            />
+          </div>
+          <div>
+            <div class="brand-text-main">Sheain</div>
+            <div class="brand-text-sub">AI Product · Portfolio</div>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <a href="#about" class="nav-link">About</a>
+          <a href="#work" class="nav-link">Projects</a>
+          <a href="#thinking" class="nav-link">Thoughts</a>
+          <a href="#contact" class="nav-link">Contact</a>
+          <button type="button" class="nav-cta chat-trigger">
+            与我聊产品 <span>↗</span>
+          </button>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <div class="hero-tag">
+              <span class="pulse-dot"></span>
+              正在参加 Inspire 2026 AI 产品挑战
+            </div>
+            <h1 class="hero-title">
+              让 <span>AI 产品原型</span> 在一周内落地可用。
+            </h1>
+            <p class="hero-sub">
+              我是 <strong>Sheain</strong>，一名对
+              <strong>AI 辅助创作、体验设计与产品运营</strong>
+              有极大热情的产品人。擅长把模糊想法拆解成可迭代的
+              MVP，并用精细的数据与用户反馈驱动决策。
+            </p>
+            <div class="hero-actions">
+              <a href="#work" class="btn-primary">查看代表项目 <span>→</span></a>
+              <a href="#contact" class="btn-ghost">获取一份 PDF 简历 <span>↗</span></a>
+            </div>
+            <div class="hero-meta">
+              <div class="chip">
+                <span class="chip-dot"></span> AI-Assisted Workflow
+              </div>
+              <div class="chip">
+                <span class="chip-dot"></span> Product Thinking · MVP
+              </div>
+              <div class="chip">
+                <span class="chip-dot"></span> 用户洞察 &amp; A/B 实验
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-orbit">
+            <div class="hero-orbit-card">
+              <div class="hero-orbit-grid"></div>
+              <div class="orbit-inner">
+                <div class="orbit-row">
+                  <div class="orbit-label">Working Mode</div>
+                  <div class="orbit-pill">
+                    <span class="orbit-pill-dot"></span> AI × Product
+                  </div>
+                </div>
+                <div class="orbit-roles">
+                  <div class="orbit-role">
+                    <div class="orbit-role-title">AI-Assisted PM</div>
+                    <div class="orbit-role-sub">
+                      利用 AI 快速探索原型、撰写文案与整理需求，并保持人对体验的终裁权。
+                    </div>
+                  </div>
+                  <div class="orbit-role">
+                    <div class="orbit-role-title">Experience Crafter</div>
+                    <div class="orbit-role-sub">
+                      关注情绪曲线与关键瞬间，设计「可感知」的细节，而不只是完成路径。
+                    </div>
+                  </div>
+                </div>
+                <div class="orbit-footer">
+                  <span>Decision Style: data-informed, user-first.</span>
+                  <span class="badge">Inspire 2026</span>
+                </div>
+              </div>
+              <div class="orbit-ring"></div>
+              <div class="orbit-ring"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" class="section reveal">
+          <div class="section-header">
+            <h2 class="section-title">About · 自我介绍</h2>
+            <p class="section-caption">
+              产品背景 + AI 工具栈 + 过往经历中的关键决策时刻，帮助你快速判断「是否想继续了解这个人」。
+            </p>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <h3 class="card-title">我是谁</h3>
+              <p class="card-meta">Background</p>
+              <p class="card-body">
+                拥有扎实的产品与用户研究基础，习惯用结构化方式拆解问题，同时保持对流行文化与内容生态的敏感度。
+              </p>
+              <div class="tag-row">
+                <span class="tag">产品规划</span>
+                <span class="tag">需求拆解</span>
+                <span class="tag">跨团队协作</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="card-title">我的 AI 工具带</h3>
+              <p class="card-meta">AI-Assisted Workflow</p>
+              <p class="card-body">
+                熟练使用多种 AI 辅助编程与设计工具（如 Cursor、图像生成、工作流编排），在调研、原型、文案与数据分析各环节提效。
+              </p>
+              <div class="tag-row">
+                <span class="tag">Cursor</span>
+                <span class="tag">Prompt 设计</span>
+                <span class="tag">自动化脚本</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="card-title">我如何做决策</h3>
+              <p class="card-meta">Product Judgment</p>
+              <p class="card-body">
+                更关注「问题是否被正确地定义」，习惯通过用户访谈、数据指标与快速实验验证假设，而不是只堆叠功能。
+              </p>
+              <div class="tag-row">
+                <span class="tag">Hypothesis-Driven</span>
+                <span class="tag">MVP</span>
+                <span class="tag">用户价值优先</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="work" class="section reveal reveal-delay-1">
+          <div class="section-header">
+            <h2 class="section-title">Selected Work · 项目精选</h2>
+            <p class="section-caption">
+              以下案例重点展示我在「AI 辅助 + 端到端产品思考」上的能力，从问题定义到方案落地。
+            </p>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <h3 class="card-title">AI 个人品牌生成器</h3>
+              <p class="card-meta">侧重：产品结构 &amp; 叙事设计</p>
+              <p class="card-body">
+                将用户的经历、能力与作品信息拆解成模块，由 AI 生成多版本的个人品牌叙事与作品集布局，帮助应聘者在短时间内完成高质量自我呈现。
+              </p>
+              <div class="tag-row">
+                <span class="tag">信息架构</span>
+                <span class="tag">多轮 Prompt 迭代</span>
+                <span class="tag">可视化模板</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="card-title">对话式需求澄清助手</h3>
+              <p class="card-meta">侧重：问题拆解 &amp; 决策记录</p>
+              <p class="card-body">
+                通过对话引导产品同学逐步澄清目标、约束与优先级，并自动生成需求文档初稿与决策日志，为后续沟通和复盘提供统一源头。
+              </p>
+              <div class="tag-row">
+                <span class="tag">需求模板</span>
+                <span class="tag">决策可追溯</span>
+                <span class="tag">团队协作</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="card-title">体验差距雷达面板</h3>
+              <p class="card-meta">侧重：数据洞察 &amp; 优先级排序</p>
+              <p class="card-body">
+                汇总多渠道反馈（调研、工单、社媒），用 AI 进行主题聚类与情绪分析，生成「体验差距雷达图」，帮助团队对齐当前最应投资的体验点。
+              </p>
+              <div class="tag-row">
+                <span class="tag">情绪分析</span>
+                <span class="tag">可视化</span>
+                <span class="tag">Roadmap 排序</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="thinking" class="section reveal reveal-delay-2">
+          <div class="section-header">
+            <h2 class="section-title">How I Think · 产品思考</h2>
+            <p class="section-caption">
+              Inspire 关注「AI 工具如何被真正用好」。下面这条时间线展示我在一次产品迭代中的核心决策节点。
+            </p>
+          </div>
+          <div class="timeline">
+            <div class="timeline-list">
+              <div class="timeline-item">
+                <div class="timeline-label">01 · Define</div>
+                <div class="timeline-title">先问「为什么」，再谈功能</div>
+                <div class="timeline-note">
+                  用 3W（Who / What / Why）框架与用户访谈确认真正被卡住的环节，而不是直接接需求。
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-label">02 · Explore</div>
+                <div class="timeline-title">用 AI 快速生成多条方案</div>
+                <div class="timeline-note">
+                  通过 Prompt 约束和示例，生成多种 UX 流程与文案版本，再进行筛选和人工打磨。
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-label">03 · Ship &amp; Learn</div>
+                <div class="timeline-title">小步上线，持续观察</div>
+                <div class="timeline-note">
+                  先让 20% 核心用户体验 MVP，结合转化数据与质性反馈快速迭代，而不是一次性追求完美。
+                </div>
+              </div>
+            </div>
+            <div class="timeline-panel">
+              <h4>一句话总结我的产品风格</h4>
+              <p>
+                「用 AI 放大好问题、好节奏与好体验，而不是只追求炫技。」
+              </p>
+              <p>如果你希望团队中的产品人：</p>
+              <ul>
+                <li>愿意亲自上手工具，而不仅停留在概念层面；</li>
+                <li>既能和业务聊增长，又能和研发讨论实现细节；</li>
+                <li>在不确定环境下，仍然有条理地推进事情前进；</li>
+              </ul>
+              <p>那我很期待在 Inspire 现场和你们继续聊聊。</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="section reveal reveal-delay-3">
+          <div class="section-header">
+            <h2 class="section-title">Contact · 与我联系</h2>
+            <p class="section-caption">
+              如果你对我的产品思考或项目细节感兴趣，非常欢迎发邮件或社交媒体消息，我会在 24 小时内回复。
+            </p>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <h3 class="card-title">邮箱 · Email</h3>
+              <p class="card-meta">推荐方式</p>
+              <p class="card-body">
+                可以简单介绍你关注的方向（例如：AI 产品规划 / 用户增长 / 校招机会），方便我更有针对性地准备回复。
+              </p>
+              <div class="tag-row">
+                <span class="tag">youremail@example.com</span>
+                <span class="tag">欢迎任何交流</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="card-title">内容平台 · Content</h3>
+              <p class="card-meta">日常输出</p>
+              <p class="card-body">
+                会不定期分享关于 AI 工具、产品体验拆解和职业思考的短文，用轻松的方式记录持续学习。
+              </p>
+              <div class="tag-row">
+                <a
+                  href="https://space.bilibili.com/1414351987"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="tag"
+                  >Bilibili · ZEROBASEONE</a
+                >
+              </div>
+            </article>
+            <article class="card">
+              <h3 class="card-title">下一步期待</h3>
+              <p class="card-meta">Looking forward</p>
+              <p class="card-body">
+                希望能在 Inspire 2026 与更多优秀的 AI 产品伙伴一起碰撞思路，把好的创意转化为真正可用、可感知的产品体验。
+              </p>
+              <div class="tag-row">
+                <span class="tag">开放合作</span>
+                <span class="tag">长期主义</span>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div>© 2026 Sheain · Built with AI-assisted workflow.</div>
+        <div class="footer-links">
+          <a href="#top" class="footer-link">回到顶部</a>
+          <a href="#work" class="footer-link">查看项目</a>
+        </div>
+      </footer>
+    </div>
+
+    <div class="chat-overlay" id="chatOverlay" aria-hidden="true">
+      <section class="chat-panel" role="dialog" aria-label="与 Sheain 聊产品">
+        <header class="chat-header">
+          <div class="chat-title">
+            <div class="chat-title-main">Sheain · Product Chat</div>
+            <div class="chat-title-sub">
+              先告诉我，你现在最想解决哪一个产品问题？
+            </div>
+          </div>
+          <div class="chat-status">
+            <span class="chat-status-dot"></span>
+            <span>AI 联合值班中</span>
+          </div>
+          <button class="chat-close" type="button" id="chatClose" aria-label="关闭对话">
+            ✕
+          </button>
+        </header>
+        <div class="chat-body" id="chatBody">
+          <div class="chat-message chat-message-bot">
+            嗨，我是 Sheain 的「产品小助手」。可以先用一两句话说说你现在在琢磨什么：是
+            <strong>新的 AI 功能想法</strong>、<strong>现有产品的转化问题</strong>，还是
+            <strong>想优化一次具体的用户旅程</strong>？
+          </div>
+        </div>
+        <form class="chat-input-bar" id="chatForm">
+          <input
+            id="chatInput"
+            class="chat-input"
+            type="text"
+            placeholder="例如：我在做一个 AI 笔记产品，但新用户留存有点低……"
+            autocomplete="off"
+          />
+          <button class="chat-send" type="submit">
+            发送
+            <span>➜</span>
+          </button>
+        </form>
+      </section>
+    </div>
+
+    <script>
+      const revealElements = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+
+      revealElements.forEach((el) => observer.observe(el));
+
+      const chatOverlay = document.getElementById("chatOverlay");
+      const chatForm = document.getElementById("chatForm");
+      const chatInput = document.getElementById("chatInput");
+      const chatBody = document.getElementById("chatBody");
+      const chatClose = document.getElementById("chatClose");
+      const chatTriggers = document.querySelectorAll(".chat-trigger");
+
+      function openChat() {
+        if (!chatOverlay) return;
+        chatOverlay.classList.add("visible");
+        chatOverlay.setAttribute("aria-hidden", "false");
+        setTimeout(() => chatInput && chatInput.focus(), 120);
+      }
+
+      function closeChat() {
+        if (!chatOverlay) return;
+        chatOverlay.classList.remove("visible");
+        chatOverlay.setAttribute("aria-hidden", "true");
+      }
+
+      chatTriggers.forEach((btn) => {
+        btn.addEventListener("click", openChat);
+      });
+
+      if (chatClose) {
+        chatClose.addEventListener("click", closeChat);
+      }
+
+      if (chatOverlay) {
+        chatOverlay.addEventListener("click", (event) => {
+          if (event.target === chatOverlay) {
+            closeChat();
+          }
+        });
+      }
+
+      if (chatForm && chatInput && chatBody) {
+        chatForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const text = chatInput.value.trim();
+          if (!text) return;
+
+          const me = document.createElement("div");
+          me.className = "chat-message chat-message-me";
+          me.textContent = text;
+          chatBody.appendChild(me);
+
+          const bot = document.createElement("div");
+          bot.className = "chat-message chat-message-bot";
+          bot.innerHTML =
+            "收到 👌。如果这是你在做的产品，我通常会从这三件事开始想：<br />1）这个问题最痛的用户是谁？<br />2）他们现在是怎么解决的？<br />3）我们能不能先用一个非常小的 MVP 去验证？<br /><br />也可以继续补充更多背景，我会把它们当作线索来拆解。";
+          chatBody.appendChild(bot);
+
+          chatInput.value = "";
+          chatBody.scrollTop = chatBody.scrollHeight;
+        });
+      }
+    </script>
+  </body>
+</html>

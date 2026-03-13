@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>佘晗颖 Sheain · AI Product Portfolio</title>
+    <style>
+      :root {
+        --bg: #050816;
+        --bg-soft: #0f172a;
+        --accent: #f9a8d4;
+        --accent-strong: #fb7185;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --chip-bg: rgba(249, 168, 212, 0.08);
+        --card-bg: rgba(15, 23, 42, 0.7);
+        --border-subtle: rgba(148, 163, 184, 0.25);
+        --radius-lg: 18px;
+        --radius-full: 999px;
+        --transition-fast: 180ms ease-out;
+        --transition-slow: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+        background: radial-gradient(circle at top left, #1e293b 0, #020617 60%);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* Background Noise */
+      .noise {
+        position: fixed; inset: 0; opacity: 0.15; pointer-events: none; z-index: -1;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      /* Navigation */
+      .nav {
+        position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 7vw; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        background: rgba(15, 23, 42, 0.65); border-bottom: 1px solid var(--border-subtle);
+      }
+      .nav-brand { display: flex; align-items: center; gap: 12px; }
+      .avatar {
+        width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(251, 113, 133, 0.4);
+        box-shadow: 0 0 20px rgba(251, 113, 133, 0.2); overflow: hidden;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .avatar:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 25px rgba(251, 113, 133, 0.5); }
+      .avatar img { width: 100%; height: 100%; object-fit: cover; }
+      .brand-text-main { font-weight: 600; font-size: 16px; letter-spacing: 0.05em; }
+      .brand-text-sub { font-size: 12px; color: var(--muted); }
+      
+      .nav-links { display: flex; gap: 24px; align-items: center; }
+      .nav-link { color: var(--muted); text-decoration: none; font-size: 14px; transition: color var(--transition-fast); }
+      .nav-link:hover { color: #fff; }
+      
+      .btn-chat {
+        padding: 8px 20px; border-radius: var(--radius-full); border: none; cursor: pointer;
+        background: linear-gradient(135deg, var(--accent-strong), #f97316); color: #fff;
+        font-weight: 500; font-size: 14px; box-shadow: 0 10px 25px rgba(251, 113, 133, 0.4);
+        transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      }
+      .btn-chat:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(251, 113, 133, 0.6); }
+
+      main { padding: 40px 7vw 100px; }
+
+      /* Animation Keyframes */
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+      }
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Scroll Reveal Classes */
+      .reveal { opacity: 0; }
+      .reveal.active { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+      /* Hero Section */
+      .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding-top: 40px; }
+      .hero-tag {
+        display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: var(--radius-full);
+        border: 1px solid rgba(251, 113, 133, 0.3); background: rgba(251, 113, 133, 0.1); font-size: 13px; color: var(--accent); margin-bottom: 24px;
+      }
+      .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-strong); box-shadow: 0 0 12px var(--accent-strong); animation: pulse 2s infinite; }
+      @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+      .hero-title { font-size: 48px; font-weight: 700; margin: 0 0 20px; line-height: 1.2; }
+      .hero-title span { background: linear-gradient(120deg, var(--accent), #f97316); -webkit-background-clip: text; color: transparent; }
+      .hero-desc { font-size: 16px; color: var(--muted); line-height: 1.6; max-width: 500px; }
+      
+      /* Visual Orbit */
+      .orbit-container { position: relative; width: 100%; height: 400px; display: flex; justify-content: center; align-items: center; }
+      .orbit-core { 
+        width: 120px; height: 120px; border-radius: 50%; 
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6); 
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.5); 
+        display: flex; justify-content: center; align-items: center; 
+        text-align: center; font-weight: bold; z-index: 2;
+        animation: float 6s ease-in-out infinite; /* 新增悬浮动画 */
+      }
+      .orbit-ring { position: absolute; border: 1px dashed rgba(255,255,255,0.2); border-radius: 50%; }
+      .ring-1 { width: 250px; height: 250px; animation: spin 20s linear infinite; }
+      .ring-2 { width: 380px; height: 380px; animation: spin 35s linear infinite reverse; }
+      .orbit-node { position: absolute; width: auto; padding: 6px 12px; background: rgba(15,23,42,0.9); border: 1px solid var(--border-subtle); border-radius: 20px; font-size: 12px; top: -15px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+
+      /* Section Common */
+      .section { margin-top: 100px; scroll-margin-top: 100px; }
+      .section-title { font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+      .section-sub { font-size: 15px; color: var(--muted); margin-bottom: 40px; max-width: 600px; }
+
+      /* Cards Grid */
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+      
+      /* 为卡片添加交错的加载延迟，形成瀑布流显现效果 */
+      .grid .card:nth-child(1) { animation-delay: 0.1s; }
+      .grid .card:nth-child(2) { animation-delay: 0.2s; }
+      .grid .card:nth-child(3) { animation-delay: 0.3s; }
+
+      .card {
+        background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+        padding: 30px; backdrop-filter: blur(10px); cursor: default;
+        position: relative; overflow: hidden; display: flex; flex-direction: column;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s, border-color 0.3s;
+      }
+      .card.interactive { cursor: pointer; }
+      .card:hover { transform: translateY(-8px); border-color: rgba(251, 113, 133, 0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+      .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--accent-strong), #f97316); opacity: 0; transition: var(--transition-fast); }
+      .card:hover::before { opacity: 1; }
+      
+      .card-tag { font-size: 12px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; display: block; }
+      .card-title { font-size: 20px; font-weight: 600; margin: 0 0 12px; color: #fff; }
+      .card-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; flex: 1; }
+      .tech-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+      .tech-chip { padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); font-size: 11px; border: 1px solid rgba(255,255,255,0.1); }
+      
+      /* Clickable Chip for Links */
+      a.tech-chip { color: #fff; text-decoration: none; border-color: rgba(251, 113, 133, 0.5); transition: background 0.2s, transform 0.2s; }
+      a.tech-chip:hover { background: rgba(251, 113, 133, 0.2); transform: translateY(-2px); }
+
+      /* Expanded Chat Panel */
+      .chat-overlay {
+        position: fixed; inset: 0; z-index: 100; pointer-events: none;
+        display: flex; align-items: flex-end; justify-content: flex-end; padding: 24px 5vw;
+        transition: background-color var(--transition-slow);
+      }
+      .chat-overlay.active { pointer-events: auto; background-color: rgba(2, 6, 23, 0.4); backdrop-filter: blur(4px); }
+      
+      .chat-panel {
+        width: 100%; max-width: 480px; height: 75vh; max-height: 700px;
+        background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(251, 113, 133, 0.4);
+        border-radius: 24px; display: flex; flex-direction: column; overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(251, 113, 133, 0.1);
+        transform: translateY(120%) scale(0.95); opacity: 0; transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms;
+        pointer-events: auto;
+      }
+      .chat-overlay.active .chat-panel { transform: translateY(0) scale(1); opacity: 1; }
+      
+      .chat-header {
+        padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);
+      }
+      .chat-info h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+      .chat-info p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+      .close-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; transition: color 0.2s; }
+      .close-btn:hover { color: #fff; }
+
+      .chat-body { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+      .msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+      .msg.bot { background: rgba(255,255,255,0.05); border-bottom-left-radius: 4px; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); }
+      .msg.user { background: linear-gradient(135deg, var(--accent-strong), #f97316); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+      
+      .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 24px 16px; }
+      .reply-chip {
+        padding: 8px 14px; background: rgba(251, 113, 133, 0.1); border: 1px solid rgba(251, 113, 133, 0.3);
+        border-radius: var(--radius-full); font-size: 12px; color: var(--accent); cursor: pointer; transition: all 0.2s;
+      }
+      .reply-chip:hover { background: rgba(251, 113, 133, 0.2); color: #fff; }
+
+      .chat-input-area { padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 12px; background: rgba(0,0,0,0.2); }
+      .chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-full); padding: 0 16px; color: #fff; font-size: 14px; outline: none; transition: border 0.2s; }
+      .chat-input:focus { border-color: var(--accent-strong); }
+      .send-btn { background: var(--accent-strong); border: none; width: 40px; height: 40px; border-radius: 50%; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s; }
+      .send-btn:hover { transform: scale(1.05); }
+
+      /* Modals */
+      .modal-overlay {
+        position: fixed; inset: 0; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px);
+        z-index: 200; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+      }
+      .modal-overlay.active { display: flex; opacity: 1; }
+      .modal-content {
+        background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+        width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto; position: relative;
+        padding: 40px; transform: translateY(20px); transition: transform 0.3s;
+      }
+      .modal-overlay.active .modal-content { transform: translateY(0); }
+      .modal-close { position: absolute; top: 20px; right: 20px; font-size: 24px; background: none; border: none; color: var(--muted); cursor: pointer; }
+      .modal-body h2 { font-size: 28px; margin-top: 0; color: #fff; }
+      .modal-body h4 { color: var(--accent); margin-top: 24px; }
+      .modal-body p, .modal-body li { color: #cbd5e1; line-height: 1.7; font-size: 15px; }
+      
+      footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-subtle); color: var(--muted); font-size: 12px; margin-top: 60px; }
+
+      @media (max-width: 768px) {
+        .hero { grid-template-columns: 1fr; text-align: center; }
+        .hero-desc { margin: 0 auto; }
+        .nav-links { display: none; }
+        .chat-panel { width: 100%; height: 85vh; border-radius: 20px 20px 0 0; }
+        .chat-overlay { padding: 0; align-items: flex-end; }
+        .modal-content { padding: 24px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="noise"></div>
+
+    <header class="nav">
+      <div class="nav-brand">
+        <div class="avatar">
+          <img src="https://www.helloimg.com/i/2024/12/10/67585c4cc7304.jpg" alt="Sheain Avatar" />
+        </div>
+        <div>
+          <div class="brand-text-main">Sheain</div>
+          <div class="brand-text-sub">AI Product Manager</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#about" class="nav-link">关于我</a>
+        <a href="#work" class="nav-link">项目案例</a>
+        <a href="#contact" class="nav-link">与我联系</a>
+      </nav>
+      <button class="btn-chat" onclick="openChat()">与我聊产品 ✧</button>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <span class="pulse-dot"></span> Inspire 2026 挑战进行中
+          </div>
+          <h1 class="hero-title">将 <span>AI 技术</span><br/>翻译成极致用户体验。</h1>
+          <p class="hero-desc">
+            我是 <strong>佘晗颖 (Sheain)</strong>。擅长基于 Long-Context LLM 与 Agent 架构定义复杂业务场景的 MVP。坚信优秀的产品经理不仅要懂模型能力边界，更要具备“极简与克制”的产品审美。
+          </p>
+          <div style="margin-top: 32px; display: flex; gap: 16px;">
+            <a href="#work" style="text-decoration:none; padding:12px 24px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:30px; color:#fff; font-size:14px; transition: transform 0.2s; display: inline-block;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">查看项目案例 ↓</a>
+          </div>
+        </div>
+        
+        <div class="orbit-container">
+          <div class="orbit-core">Product<br/>Thinking</div>
+          <div class="orbit-ring ring-1">
+            <div class="orbit-node">LLM + RAG</div>
+            <div class="orbit-node" style="top: auto; bottom: -15px;">Prompt Tuning</div>
+          </div>
+          <div class="orbit-ring ring-2">
+            <div class="orbit-node">User Research</div>
+            <div class="orbit-node" style="top: auto; bottom: -15px;">A/B Testing</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-title">About · 自我介绍</div>
+        <p class="section-sub">产品背景 + AI 工具栈 + 决策模型，帮助你快速判断「是否想继续了解这个人」。</p>
+        <div class="grid">
+          <article class="card reveal">
+            <span class="card-tag">Background</span>
+            <h3 class="card-title">我是谁</h3>
+            <p class="card-desc">拥有扎实的产品与用户研究基础，习惯用结构化方式拆解问题，同时保持对流行文化与内容生态的高度敏感。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">产品规划</span>
+              <span class="tech-chip">需求拆解</span>
+              <span class="tech-chip">跨团队协作</span>
+            </div>
+          </article>
+          <article class="card reveal">
+            <span class="card-tag">AI-Assisted Workflow</span>
+            <h3 class="card-title">我的 AI 工具带</h3>
+            <p class="card-desc">熟练使用多种 AI 辅助编程与设计工具（如 Cursor、Coze、Dify），在调研、原型、文案与数据分析各环节均能实现提效。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">Cursor</span>
+              <span class="tech-chip">Prompt 设计</span>
+              <span class="tech-chip">Agent 搭建</span>
+            </div>
+          </article>
+          <article class="card reveal">
+            <span class="card-tag">Product Judgment</span>
+            <h3 class="card-title">我如何做决策</h3>
+            <p class="card-desc">更关注「问题是否被正确地定义」，习惯通过用户访谈、数据指标与快速实验来验证假设，而不是盲目堆叠功能。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">Hypothesis-Driven</span>
+              <span class="tech-chip">MVP 验证</span>
+              <span class="tech-chip">用户价值优先</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="work" class="section reveal">
+        <div class="section-title">Selected Projects · 项目精选</div>
+        <p class="section-sub">深入业务痛点，利用 AI 与创新硬件重构工作流与体验。点击卡片查看项目详细复盘。</p>
+        <div class="grid">
+          <article class="card interactive reveal" onclick="openModal('modal-contract')">
+            <span class="card-tag">B端业务提效 · AI赋能</span>
+            <h3 class="card-title">建筑工程智能合同审查系统</h3>
+            <p class="card-desc">针对建筑施工合同条款长、风险点隐藏深的痛点，基于 Long-Context LLM 与 RAG 技术构建的智能排雷系统。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">Qwen-plus</span>
+              <span class="tech-chip">RAG + CoT</span>
+              <span class="tech-chip">SFT</span>
+              <span class="tech-chip">92% 准确率</span>
+            </div>
+          </article>
+          <article class="card interactive reveal" onclick="openModal('modal-vr')">
+            <span class="card-tag">硬件生态 · C端体验</span>
+            <h3 class="card-title">「云镜」VR 休闲娱乐头显生态</h3>
+            <p class="card-desc">大学生创新创业大赛项目。结合人体工学头显硬件与内置轻量级休闲游戏，为高压人群打造沉浸式碎片化放松体验。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">VR/XR 体验设计</span>
+              <span class="tech-chip">用户行为旅程</span>
+              <span class="tech-chip">游戏化交互</span>
+            </div>
+          </article>
+          <article class="card interactive reveal" onclick="openModal('modal-portfolio')">
+            <span class="card-tag">自然语言编程 · 敏捷落地</span>
+            <h3 class="card-title">AI 驱动的 Personal Portfolio</h3>
+            <p class="card-desc">响应 Inspire 考核要求，完全使用自然语言驱动 AI 编程助手（Cursor）完成从 MVP 定义到前端渲染与交互全流程。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">AI-Assisted</span>
+              <span class="tech-chip">Prompt Engineering</span>
+              <span class="tech-chip">MVP 思维</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="section reveal">
+        <div class="section-title">Contact · 与我联系</div>
+        <p class="section-sub">如果你对我的产品思考或项目细节感兴趣，非常欢迎发邮件或通过社交媒体交流，我会尽快回复。</p>
+        <div class="grid">
+          <article class="card reveal">
+            <span class="card-tag">推荐方式</span>
+            <h3 class="card-title">邮箱 · Email</h3>
+            <p class="card-desc">可以简单介绍你关注的方向（如 AI 产品规划 / 校招机会），方便我更有针对性地准备回复。</p>
+            <div class="tech-stack">
+              <a href="mailto:3064436693@qq.com" class="tech-chip">📧 3064436693@qq.com ↗</a>
+            </div>
+          </article>
+          <article class="card reveal">
+            <span class="card-tag">日常输出</span>
+            <h3 class="card-title">内容平台 · Content</h3>
+            <p class="card-desc">会不定期分享关于 AI 工具、硬件体验拆解和职业思考，用轻松的方式记录持续学习。</p>
+            <div class="tech-stack">
+              <a href="https://space.bilibili.com/946974" target="_blank" rel="noopener" class="tech-chip">📺 影视飓风的个人空间-影视飓风个人主页-哔哩哔哩视频 ↗</a>
+            </div>
+          </article>
+          <article class="card reveal">
+            <span class="card-tag">Looking forward</span>
+            <h3 class="card-title">下一步期待</h3>
+            <p class="card-desc">希望能在 Inspire 2026 与更多优秀的 AI 产品伙伴一起碰撞思路，把好的创意转化为真正可用、可感知的产品体验。</p>
+            <div class="tech-stack">
+              <span class="tech-chip">开放合作</span>
+              <span class="tech-chip">长期主义</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      © 2026 Sheain · AI Product Manager Portfolio · Built with AI-Assisted Workflow.
+    </footer>
+
+    <div class="modal-overlay" id="modal-contract" onclick="closeModal(event, 'modal-contract')">
+      <div class="modal-content">
+        <button class="modal-close" onclick="document.getElementById('modal-contract').classList.remove('active')">&times;</button>
+        <div class="modal-body">
+          <span class="card-tag">AI B端产品线</span>
+          <h2>建筑工程智能合同审查系统</h2>
+          <h4>📝 问题定义 (Problem)</h4>
+          <p>传统建筑施工合同通常长达百页，人工审查耗时耗力，且极易漏掉关键的财务与法务风险条款（如违约金比例异常、账期陷阱）。</p>
+          <h4>💡 核心解决方案 (Solution)</h4>
+          <ul>
+            <li><strong>底层架构：</strong>采用 <code>Long-Context LLM + RAG + CoT</code> 的组合方案，确保长文本上下文理解的连贯性。</li>
+            <li><strong>向量检索：</strong>使用 <code>BGE-M3</code> 嵌入模型对合同段落进行高效向量化切分与召回。</li>
+            <li><strong>指令微调：</strong>通过构建 Golden Dataset，使用 Few-Shot 与 SFT 技术，优化模型在特定法务术语上的提取精度。</li>
+          </ul>
+          <h4>📈 业务价值 (Impact)</h4>
+          <p>经过多轮 Bad Case 修复与 Prompt 调优，核心风险召回准确率达到 <strong>92%</strong>，人工审查耗时整体缩减近 <strong>98%</strong>，极大实现了降本增效。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-vr" onclick="closeModal(event, 'modal-vr')">
+      <div class="modal-content">
+        <button class="modal-close" onclick="document.getElementById('modal-vr').classList.remove('active')">&times;</button>
+        <div class="modal-body">
+          <span class="card-tag">创新硬件与内容体验</span>
+          <h2>「云镜」VR 休闲娱乐头显</h2>
+          <h4>📝 项目背景 (Background)</h4>
+          <p>在快节奏的现代生活中，年轻人急需碎片化的“心理避难所”。本项目依托大学生创新创业大赛孵化，旨在通过 VR 技术提供沉浸式的放松体验。</p>
+          <h4>💡 产品设计 (Product Design)</h4>
+          <ul>
+            <li><strong>硬件统筹：</strong>调研并定义了头显的重量、视场角及佩戴舒适度指标，确保长时间佩戴的防眩晕体验。</li>
+            <li><strong>内容生态：</strong>内置多款轻量级休闲游戏与冥想场景，关注用户的“情绪曲线”，从视觉 UI 到听觉反馈均做了减法设计。</li>
+          </ul>
+          <h4>📈 结果验证 (Outcome)</h4>
+          <p>在校园内外进行了小规模内测验证，收集并分析用户反馈（A/B Testing 界面布局），最终在创新创业大赛中获得优异名次，验证了产品的市场可行性。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-portfolio" onclick="closeModal(event, 'modal-portfolio')">
+      <div class="modal-content">
+        <button class="modal-close" onclick="document.getElementById('modal-portfolio').classList.remove('active')">&times;</button>
+        <div class="modal-body">
+          <span class="card-tag">Inspire 2026 校招考核</span>
+          <h2>AI 驱动的个人品牌门户构建</h2>
+          <p>本网站即为考核产出物。核心体现了以下能力：</p>
+          <ul>
+            <li><strong>拥抱 AI (AI-Assisted):</strong> 零手写代码，完全通过精炼的自然语言结构（Prompt）指挥 AI 工具生成包含复杂 CSS 动画和逻辑的前端代码。</li>
+            <li><strong>产品审美：</strong> 摒弃了花哨无用的组件，采用黑底+粉橘渐变的极简赛博朋克风，克制且突出核心信息。</li>
+            <li><strong>快速迭代：</strong> 从纯文本线框图开始，到单页面落地，再到加入 Modal 弹窗逻辑和 Chat 模拟器，体现了典型的 MVP 到完整版的迭代过程。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-overlay" id="chatOverlay">
+      <div class="chat-panel" id="chatPanel">
+        <div class="chat-header">
+          <div class="chat-info">
+            <h3><span class="pulse-dot" style="position:static; margin-right:4px;"></span> Sheain AI 面试官助理</h3>
+            <p>实时在线，基于我的简历知识库回复</p>
+          </div>
+          <button class="close-btn" onclick="closeChat()">&times;</button>
+        </div>
+        
+        <div class="chat-body" id="chatBody">
+          <div class="msg bot">你好！我是佘晗颖的 AI 助理。欢迎来到我的 Inspire 考核演示区。关于我的简历、产品方法论或者过往项目，你想了解点什么？</div>
+        </div>
+        
+        <div class="quick-replies" id="quickReplies">
+          <button class="reply-chip" onclick="sendQuickReply('能详细说说你的 AI 合同审查项目吗？')">讲讲 AI 合同审查系统</button>
+          <button class="reply-chip" onclick="sendQuickReply('你在产品决策时更看重什么？')">你的产品决策偏好</button>
+          <button class="reply-chip" onclick="sendQuickReply('你平时喜欢玩什么游戏？对游戏产品有了解吗？')">你的爱好与游戏理解</button>
+        </div>
+
+        <form class="chat-input-area" id="chatForm">
+          <input type="text" id="chatInput" class="chat-input" placeholder="输入你的问题..." autocomplete="off">
+          <button type="submit" class="send-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // 监听滚动实现模块的淡入动效
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+      };
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target); // 触发一次后解绑
+          }
+        });
+      }, observerOptions);
+
+      // 为带有 reveal 类的元素添加监听
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // 弹窗逻辑
+      function openModal(id) { document.getElementById(id).classList.add('active'); }
+      function closeModal(e, id) { 
+        if(e.target.id === id) { document.getElementById(id).classList.remove('active'); }
+      }
+
+      // Chat逻辑
+      const chatOverlay = document.getElementById('chatOverlay');
+      const chatBody = document.getElementById('chatBody');
+      const chatInput = document.getElementById('chatInput');
+      
+      function openChat() { chatOverlay.classList.add('active'); setTimeout(() => chatInput.focus(), 300); }
+      function closeChat() { chatOverlay.classList.remove('active'); }
+      
+      chatOverlay.addEventListener('click', (e) => {
+        if(e.target === chatOverlay) closeChat();
+      });
+
+      function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = `msg ${sender}`;
+        div.innerHTML = text;
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      function sendQuickReply(text) {
+        document.getElementById('quickReplies').style.display = 'none';
+        handleSend(text);
+      }
+
+      document.getElementById('chatForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if(text) {
+          document.getElementById('quickReplies').style.display = 'none';
+          chatInput.value = '';
+          handleSend(text);
+        }
+      });
+
+      function handleSend(userText) {
+        addMessage(userText, 'user');
+        setTimeout(() => {
+          let botReply = "这是一个非常好的问题。基于“第一性原理”，我认为在定义任何功能之前，都需要先明确它的核心用户价值和验证成本。你可以通过邮件进一步与我探讨。";
+          
+          if(userText.includes("合同")) {
+            botReply = "那个项目中最大的挑战是解决长文本导致模型的“注意力遗忘”。我引入了 RAG 和 CoT（思维链），并用 BGE-M3 做了段落的精准召回，最终把法务条款的风险召回率做到了 92%。";
+          } else if(userText.includes("决策")) {
+            botReply = "我非常看重「数据驱动与假设验证」。我会习惯先用最小可行性产品 (MVP) 上线跑 A/B 测试，再根据真实的用户点击和留存数据决定后续的 Roadmap。";
+          } else if(userText.includes("游戏")) {
+            botReply = "我是一个重度游戏玩家！平时会玩《原神》、《王者荣耀》、《明日方舟》等。丰富的游戏经验让我对产品的“心流体验（Flow）”和“沉浸式交互”有极高的要求，这也是我做产品时非常在意的微观体验。";
+          }
+          
+          addMessage(botReply, 'bot');
+        }, 800);
+      }
+    </script>
+  </body>
+</html>
